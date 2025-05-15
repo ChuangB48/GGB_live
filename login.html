@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            login
+        </title>
+        <style>
+            div{
+                position: absolute;
+                width: 50vw;
+                height: 50vh;
+                left: 25vw;
+                top: 25vh;
+                border: 1px lightskyblue solid;
+                border-radius: 10px;
+                text-align: center;
+            }
+            span{
+                font-size: xx-large;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <br><br><br><br><br><br>
+            <span>
+                Enter Your Name
+            </span>
+            <br><br><br><br><br>
+            <input type="text" id="i">
+        </div>
+        <script>
+            const socket=new WebSocket("wss://ggb-brawl.onrender.com");
+            socket.onmessage=event=>{
+                data=JSON.parse(event.data);
+                if(data.type=="in"){
+                    if(data.allow=="y"){
+                        document.cookie="name="+data.name;
+                        location.href="GGB.html";
+                    }
+                    else{
+                        alert("名字已被使用。");
+                    }
+                }
+            }
+            document.addEventListener('keydown',e=>{
+                if(e.code=="Enter"){
+                    a=document.getElementById("i");
+                    if(a.value.trim()==''){
+                        alert("名字不能為空。");
+                    }
+                    else if(a.value[0]>"Z"||a.value[0]<"A"){
+                        alert("首字必為大寫英文字母。");
+                    }
+                    else{
+                        socket.send(JSON.stringify({
+                            "type":"in",
+                            "name":a.value.trim()
+                        }));
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
